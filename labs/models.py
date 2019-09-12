@@ -25,7 +25,7 @@ class Course(models.Model):
 class Lab(models.Model):
     lid = models.AutoField(primary_key=True)
     group = models.CharField(max_length=30)
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='labs')
     instructors = models.ManyToManyField(User, related_name="labs")
 
     def __str__(self):

@@ -92,5 +92,6 @@ venv/
 
 db.sqlite3
 
-## editor ##
+## editors ##
 .idea/
+.vscode/
