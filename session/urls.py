@@ -1,7 +1,7 @@
 from django.urls import path
-
-from . import views
+from .views import post_attendace_img, index
 
 urlpatterns = [
-    path('', views.index, name='index'),
+    path('', index, name='index'),
+    path('image/', post_attendace_img)
 ]

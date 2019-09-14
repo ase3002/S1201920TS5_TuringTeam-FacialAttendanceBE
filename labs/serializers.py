@@ -27,7 +27,7 @@ class SessionSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class AttandanceSerializer(serializers.ModelSerializer):
+class AttendanceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Attendance
         fields = '__all__'

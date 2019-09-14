@@ -7,8 +7,10 @@ from PIL import Image
 
 import face_recognition
 
+
 def remove_base64_header(image_base64):
     return image_base64.split("base64,")[1]
+
 
 def read_image_from_request(json_data):
     image_base64 = json_data['image']
@@ -17,6 +19,7 @@ def read_image_from_request(json_data):
     im = Image.open(io.BytesIO(image_data))
     im = im.convert('RGB')
     return np.array(im)
+
 
 def handle_recognition_request(json_data):
     image = read_image_from_request(json_data)

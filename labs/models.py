@@ -65,6 +65,10 @@ class Attendance(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     session = models.ForeignKey(Session, on_delete=models.CASCADE)
     status = models.CharField(max_length=2, choices=ATTENDANCE_STATUS, default='AB')
+    reason = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return "%s %s %s" % (self.session, self.student, self.get_status_display())
+
+    class Meta:
+        unique_together = (("student", "session"),)
