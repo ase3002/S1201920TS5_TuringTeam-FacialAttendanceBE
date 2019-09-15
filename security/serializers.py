@@ -1,13 +1,22 @@
 from rest_framework import serializers
 from rest_framework_jwt.settings import api_settings
 from django.contrib.auth.models import User
+from labs.models import Lab
+
+
+class LabContentSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Lab
+        exclude = ['instructors']
 
 
 class UserSerializer(serializers.ModelSerializer):
+    labs = LabContentSerializer(many=True)
 
     class Meta:
         model = User
-        fields = ('username',)
+        fields = ('username', 'id', 'email', 'labs')
 
 
 class UserSerializerWithToken(serializers.ModelSerializer):
