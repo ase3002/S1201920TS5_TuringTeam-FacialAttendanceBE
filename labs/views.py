@@ -17,7 +17,7 @@ class LabListView(generics.ListAPIView):
 class StudentListView(generics.ListAPIView):
     queryset = Student.objects.all()
     serializer_class = StudentSerializer
-    filterset_fields = ['labs']
+    filterset_fields = ['lab']
 
 
 class SessionViewSet(viewsets.ModelViewSet):

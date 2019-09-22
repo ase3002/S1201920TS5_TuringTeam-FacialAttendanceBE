@@ -49,7 +49,7 @@ class Student(models.Model):
     name = models.CharField(max_length=50)
     email = models.CharField(max_length=50)
     face_encoding = models.TextField(max_length=500)
-    labs = models.ManyToManyField(Lab, related_name="students")
+    lab = models.ManyToManyField(Lab, related_name="students")
 
     def __str__(self):
         return self.name
