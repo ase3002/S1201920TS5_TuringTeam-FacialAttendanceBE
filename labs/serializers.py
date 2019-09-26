@@ -18,7 +18,7 @@ class LabSerializer(serializers.ModelSerializer):
 class StudentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Student
-        fields = '__all__'
+        exclude = ('face_encoding',)
 
 
 class SessionSerializer(serializers.ModelSerializer):

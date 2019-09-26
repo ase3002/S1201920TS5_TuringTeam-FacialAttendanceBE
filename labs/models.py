@@ -48,7 +48,7 @@ class Student(models.Model):
     matric_num = models.CharField(max_length=15, primary_key=True)
     name = models.CharField(max_length=50)
     email = models.CharField(max_length=50)
-    face_encoding = models.TextField(max_length=500)
+    face_encoding = models.BinaryField()
     lab = models.ManyToManyField(Lab, related_name="students")
 
     def __str__(self):
