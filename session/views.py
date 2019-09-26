@@ -14,8 +14,9 @@ from rest_framework import status, views, parsers, exceptions
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser, FileUploadParser
 from rest_framework.decorators import api_view, parser_classes
-from .session_manager import handle_recognition_request
-from labs.models import Student, Session, Lab
+from .session_manager import handle_recognition_request, read_image_from_request
+from labs.models import Student, Session, Lab, Attendance
+from labs.serializers import AttendanceSerializer
 
 IMG_PATH = 'images'
 counter = 0
@@ -80,6 +81,8 @@ def post_attendace_img(request, *args, **kwargs):
     im = Image.open(f)
     im = im.convert('RGB')
     im = np.array(im)
+    # im = read_image_from_request(request.data)
+
     sid = request.data['sid']
     face_locations = face_recognition.face_locations(im)
     face_encodings = face_recognition.face_encodings(im, face_locations)
@@ -88,8 +91,8 @@ def post_attendace_img(request, *args, **kwargs):
     if sid not in face_data:
         session = Session.objects.get(pk=sid)
         students = session.lab.students.all()
-        known_face_encodings = [pickle.loads(base64.b64decode(student.face_encoding)) for student in students]
-        known_face_matric = [student.matric_num for student in students]
+        known_face_encodings = [pickle.loads(base64.b64decode(student.face_encoding)) for student in students if student.face_encoding]
+        known_face_matric = [student.matric_num for student in students if student.face_encoding]
         face_data[sid] = {
             'known_face_encodings': known_face_encodings,
             'known_face_matric': known_face_matric,
@@ -111,9 +114,35 @@ def post_attendace_img(request, *args, **kwargs):
             name = known_face_matric[best_match_index]
             attended_matric.append(name)
 
-    status = ['attend' if matric in attended_matric else 'missing' for matric in all_students_matric]
-    result = {'result': list(zip(all_students_matric, status))}
-    return JsonResponse(result)
+    status = [True if matric in attended_matric else False for matric in all_students_matric]
+    student_status = dict((zip(all_students_matric, status)))
+
+    prev_records = Attendance.objects.filter(session=sid)
+    if not prev_records.exists():
+        Attendance.objects.bulk_create(
+            [Attendance(status='A', student_id=student, session_id=sid) if status
+             else Attendance(status='AB', student_id=student, session_id=sid) for student, status in student_status.items()]
+        )
+    else:
+        for record in prev_records:
+            # previous record: this student attends the session
+            if record.status == 'A':
+                pass
+
+            # previous record: this student does not attend session
+            elif record.status == 'AB':
+                # matches this student, update the status to late
+                if student_status[record.student_id]:
+                    record.status = 'L'
+
+        Attendance.objects.bulk_update(
+            prev_records,
+            ['status']
+        )
+
+    queryset = Attendance.objects.filter(session=sid)
+    serializer = AttendanceSerializer(queryset, many=True)
+    return Response(serializer.data)
 
 
 @csrf_exempt
