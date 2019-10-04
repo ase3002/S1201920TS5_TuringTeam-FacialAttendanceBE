@@ -12,7 +12,7 @@ from PIL import Image
 import face_recognition
 from rest_framework import status, views, parsers, exceptions
 from rest_framework.response import Response
-from rest_framework.parsers import MultiPartParser, FormParser, FileUploadParser
+from rest_framework.parsers import MultiPartParser, FormParser, FileUploadParser, JSONParser
 from rest_framework.decorators import api_view, parser_classes
 from .session_manager import handle_recognition_request, read_image_from_request
 from labs.models import Student, Session, Lab, Attendance
@@ -63,7 +63,7 @@ def end_session(request, *args, **kwargs):
 
 
 @api_view(['POST'])
-@parser_classes([MultiPartParser, FormParser])
+@parser_classes([JSONParser, FormParser])
 def post_attendace_img(request, *args, **kwargs):
     if 'image' not in request.data:
         raise ParseError('No image')
@@ -71,17 +71,17 @@ def post_attendace_img(request, *args, **kwargs):
     if 'sid' not in request.data:
         raise ParseError('Not sid found')
 
-    f = request.data['image']
-    try:
-        im = Image.open(f)
-        im.verify()
-    except Exception:
-        raise exceptions.ParseError("Unsupported image")
+    # f = request.data['image']
+    # try:
+    #     im = Image.open(f)
+    #     im.verify()
+    # except Exception:
+    #     raise exceptions.ParseError("Unsupported image")
 
-    im = Image.open(f)
-    im = im.convert('RGB')
-    im = np.array(im)
-    # im = read_image_from_request(request.data)
+    # im = Image.open(f)
+    # im = im.convert('RGB')
+    # im = np.array(im)
+    im = read_image_from_request(request.data)
 
     sid = request.data['sid']
     face_locations = face_recognition.face_locations(im)
