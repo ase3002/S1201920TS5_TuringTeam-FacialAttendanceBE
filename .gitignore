@@ -86,7 +86,13 @@ target/
 __pycache__/
 local_settings.py
 
+## Virtual env ##
 .env
 venv*/
 .idea
+
 db.sqlite3
+
+## editors ##
+.idea/
+.vscode/
