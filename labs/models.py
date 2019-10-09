@@ -45,7 +45,7 @@ class Session(models.Model):
 
 
 class Student(models.Model):
-    matric_num = models.CharField(max_length=15, primary_key=True)
+    mid = models.CharField(max_length=15, primary_key=True)
     name = models.CharField(max_length=50)
     email = models.CharField(max_length=50)
     face_encoding = models.BinaryField()
