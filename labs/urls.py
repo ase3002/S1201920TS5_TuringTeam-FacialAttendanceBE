@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import CourseViewSet, LabListView, StudentListView, SessionViewSet, AttendanceViewSet, SessionsByLId, sessionBySId, studentByMid
+from .views import CourseViewSet, LabListView, StudentListView, SessionViewSet, AttendanceViewSet, SessionsByLId, sessionBySId, studentByMid, updateAttendanceBySId, updateAttendanceByMId
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
@@ -12,7 +12,9 @@ urlpatterns = [
     path('students/', StudentListView.as_view(), name='student'),
     path('sessions/<int:lid>', SessionsByLId.as_view()),
     path('session/<int:sid>', sessionBySId),
-    path('student/<str:mid>', studentByMid)
+    path('student/<str:mid>', studentByMid),
+    path('attendance/session', updateAttendanceBySId),
+    path('attendance/student', updateAttendanceByMId)
 ]
 
 urlpatterns.extend(router.urls)

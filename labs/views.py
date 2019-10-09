@@ -1,4 +1,6 @@
-from rest_framework import status, views, viewsets, permissions, generics
+from rest_framework import status, viewsets, generics
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 from .models import Course, Lab, Student, Session, Attendance
 from .serializers import CourseSerializer, LabSerializer, StudentSerializer, SessionSerializer, AttendanceSerializer
 from django.http import JsonResponse
@@ -61,3 +63,26 @@ def studentByMid(request, *args, **kwargs):
         email=student.email,
         sessions=[dict(sid=a['session'], attendance=a['status'], remark=a['reason']) for a in attendance]))
 
+
+@api_view(['POST'])
+def updateAttendanceBySId(request, *args, **kwargs):
+    for std in request.data['students']:
+        Attendance.objects.update_or_create(
+            student=Student.objects.get(mid=std['mid']),
+            session=Session.objects.get(sid=request.data['sid']),
+            status=std['attendance'],
+            reason=std['remark'])
+
+    return Response(request.data['sid'], status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+def updateAttendanceByMId(request, *args, **kwargs):
+    for session in request.data['sessions']:
+        Attendance.objects.update_or_create(
+            student=Student.objects.get(mid=request.data['mid']),
+            session=Session.objects.get(sid=session['sid']),
+            status=session['attendance'],
+            reason=session['remark'])
+
+    return Response(request.data['mid'], status=status.HTTP_200_OK)
