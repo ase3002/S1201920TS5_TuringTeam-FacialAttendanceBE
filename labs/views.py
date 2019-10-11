@@ -69,9 +69,10 @@ def updateAttendanceBySId(request, *args, **kwargs):
     for std in request.data['students']:
         Attendance.objects.update_or_create(
             student=Student.objects.get(mid=std['mid']),
-            session=Session.objects.get(sid=request.data['sid']),
-            status=std['attendance'],
-            reason=std['remark'])
+            session=Session.objects.get(sid=int(request.data['sid'])),
+            defaults=dict(
+                status=std['attendance'],
+                reason=std['remark']))
 
     return Response(request.data['sid'], status=status.HTTP_200_OK)
 
@@ -81,8 +82,9 @@ def updateAttendanceByMId(request, *args, **kwargs):
     for session in request.data['sessions']:
         Attendance.objects.update_or_create(
             student=Student.objects.get(mid=request.data['mid']),
-            session=Session.objects.get(sid=session['sid']),
-            status=session['attendance'],
-            reason=session['remark'])
+            session=Session.objects.get(sid=int(session['sid'])),
+            defaults=dict(
+                status=session['attendance'],
+                reason=session['remark']))
 
     return Response(request.data['mid'], status=status.HTTP_200_OK)
