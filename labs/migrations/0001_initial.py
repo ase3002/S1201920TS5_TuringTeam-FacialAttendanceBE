@@ -36,11 +36,11 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Student',
             fields=[
-                ('matric_num', models.CharField(max_length=15, primary_key=True, serialize=False)),
+                ('mid', models.CharField(max_length=15, primary_key=True, serialize=False)),
                 ('name', models.CharField(max_length=50)),
                 ('email', models.CharField(max_length=50)),
                 ('face_encoding', models.TextField(max_length=500)),
-                ('labs', models.ManyToManyField(related_name='students', to='labs.Lab')),
+                ('lab', models.ManyToManyField(related_name='students', to='labs.Lab')),
             ],
         ),
         migrations.CreateModel(

@@ -92,11 +92,11 @@ def post_attendace_img(request, *args, **kwargs):
         session = Session.objects.get(pk=sid)
         students = session.lab.students.all()
         known_face_encodings = [pickle.loads(base64.b64decode(student.face_encoding)) for student in students if student.face_encoding]
-        known_face_matric = [student.matric_num for student in students if student.face_encoding]
+        known_face_matric = [student.mid for student in students if student.face_encoding]
         face_data[sid] = {
             'known_face_encodings': known_face_encodings,
             'known_face_matric': known_face_matric,
-            'all_students_matric': [student.matric_num for student in students]
+            'all_students_matric': [student.mid for student in students]
         }
 
     known_face_encodings = face_data[sid]['known_face_encodings']
