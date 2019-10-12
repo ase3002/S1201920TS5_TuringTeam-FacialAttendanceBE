@@ -74,10 +74,12 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
 }
 
-CORS_ORIGIN_WHITELIST = (
-    # frontend react app default port
-    'https://localhost:3000',
-)
+# CORS_ORIGIN_WHITELIST = (
+#     # frontend react app default port
+#     'https://localhost:3000',
+# )
+
+CORS_ORIGIN_ALLOW_ALL = True
 
 JWT_AUTH = {
     'JWT_RESPONSE_PAYLOAD_HANDLER': 'security.utils.jwt_response_handler',
