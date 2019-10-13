@@ -10,7 +10,7 @@ urlpatterns = [
     path('labs/', LabListView.as_view(), name='labs'),
     path('session/', SessionViewSet.as_view({'get': 'list', 'post': 'create'}), name='session'),
     path('students/', StudentListView.as_view(), name='student'),
-    path('sessions/<int:lid>', SessionsByLId.as_view()),
+    path('sessions/', SessionsByLId.as_view()),
     path('session/<int:sid>', sessionBySId),
     path('student/<str:mid>', studentByMid),
     path('attendance/session', updateAttendanceBySId),
