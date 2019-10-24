@@ -1,0 +1,4 @@
+[run]
+branch=True
+source=labs,security,session
+omit=*migrations*, *test*

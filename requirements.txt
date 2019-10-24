@@ -33,4 +33,4 @@ sqlparse==0.3.0
 uritemplate==3.0.0
 urllib3==1.25.3
 psycopg2==2.7.5
-
+coverage==4.5.4
