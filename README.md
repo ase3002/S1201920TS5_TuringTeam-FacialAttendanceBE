@@ -21,3 +21,22 @@ To start the development server, run
 ```sh
 python manage.py. runserver
 ```
+
+
+## Test
+run tests
+```
+$ python manage.py test
+```
+
+run coverage
+```
+$ coverage run manage.py test
+$ coverage report
+```
+
+generate html report
+```
+$ coverage run manage.py test && coverage html
+```
+open htmlcov/index.html
