@@ -1,14 +1,29 @@
+sudo: required
 language: python
+
 python:
   - "3.7-dev"
-
-cache: pip
 
 services:
   - docker
 
-before_script: pip install docker-compose
+env:
+  global:
+    DOCKER_COMPOSE_VERSION: 1.23.2
+    CACHE_IMAGE: caoliu98/facial-attendance-backend
+    TAG: latest
+
+before_install:
+  - sudo rm /usr/local/bin/docker-compose
+  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+  - chmod +x docker-compose
+  - sudo mv docker-compose /usr/local/bin
+
+before_script:
+  - docker pull $CACHE_IMAGE:$TAG || true
 
 script:
-  - docker-compose run web sh -c "pycodestyle ."
-  - docker-compose run web sh -c "python manage.py makemigrations && python manage.py migrate && python manage.py test"
+  - docker-compose build
+  - docker-compose up -d
+  - docker-compose exec web pycodestyle .
+  - docker-compose exec web python manage.py test
