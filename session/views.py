@@ -87,7 +87,7 @@ def post_attendace_img(request, *args, **kwargs):
     face_locations = face_recognition.face_locations(im)
     face_encodings = face_recognition.face_encodings(im, face_locations)
 
-    global face_data
+    global face_data    # cache student facial encoding data
     if sid not in face_data:
         session = Session.objects.get(pk=sid)
         students = session.lab.students.all()
@@ -99,11 +99,13 @@ def post_attendace_img(request, *args, **kwargs):
             'all_students_matric': [student.mid for student in students]
         }
 
+    # facial data for students who take this lab
     known_face_encodings = face_data[sid]['known_face_encodings']
     known_face_matric = face_data[sid]['known_face_matric']
     all_students_matric = face_data[sid]['all_students_matric']
 
-    attended_matric = []
+    # match student's face encoding with the receiving image
+    attended_matric = []        # list of the matrics for students who attend this session
     for face_encoding in face_encodings:
         matches = face_recognition.compare_faces(known_face_encodings, face_encoding)
         name = 'Unknown'
@@ -114,8 +116,9 @@ def post_attendace_img(request, *args, **kwargs):
             name = known_face_matric[best_match_index]
             attended_matric.append(name)
 
-    status = [True if matric in attended_matric else False for matric in all_students_matric]
-    student_status = dict((zip(all_students_matric, status)))
+    # status for each student: True for matched, False for unmatched
+    attend_status = [True if matric in attended_matric else False for matric in all_students_matric]
+    student_status = dict((zip(all_students_matric, attend_status)))
 
     prev_records = Attendance.objects.filter(session=sid)
     if not prev_records.exists():
