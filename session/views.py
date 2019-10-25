@@ -1,4 +1,3 @@
-import os
 import json
 import numpy as np
 import pickle
@@ -6,48 +5,21 @@ import base64
 
 from django.http import JsonResponse, HttpResponseBadRequest
 from django.views.decorators.csrf import csrf_exempt
-from .forms import ImageForm
 from rest_framework.exceptions import ParseError
 from PIL import Image
 import face_recognition
 from rest_framework import status, views, parsers, exceptions
 from rest_framework.response import Response
-from rest_framework.parsers import MultiPartParser, FormParser, FileUploadParser, JSONParser
+from rest_framework.parsers import FormParser, JSONParser
 from rest_framework.decorators import api_view, parser_classes
 from .session_manager import handle_recognition_request, read_image_from_request
-from labs.models import Student, Session, Lab, Attendance
+from labs.models import Student, Session, Attendance
 from labs.serializers import AttendanceSerializer
 
 IMG_PATH = 'images'
 counter = 0
 
 face_data = {}
-
-
-@api_view(['POST'])
-@parser_classes([MultiPartParser, FormParser])
-def count_faces(request):
-    if 'file' not in request.data:
-        raise ParseError("Empty Content")
-
-    f = request.data['file']
-    # verify image
-    im = Image.open(f)
-    im.verify()
-
-    # open image
-    im = Image.open(f)
-    # if not os.path.exists(IMG_PATH):
-    #     os.mkdir(IMG_PATH)
-    # im.save(os.path.join(IMG_PATH, 'photo.jpg'))
-
-    im = im.convert('RGB')
-    image = np.array(im)
-    n_faces = len(face_recognition.face_locations(image))
-
-    global counter
-    counter += 1
-    return Response(n_faces, status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])
