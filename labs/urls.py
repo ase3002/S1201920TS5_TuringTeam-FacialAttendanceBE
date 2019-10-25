@@ -1,5 +1,6 @@
 from django.urls import path
-from .views import CourseViewSet, LabListView, StudentListView, SessionViewSet, AttendanceViewSet, SessionsByLId, sessionBySId, studentByMid, updateAttendanceBySId, updateAttendanceByMId
+from .views import (CourseViewSet, LabListView, StudentListView, SessionViewSet, AttendanceViewSet,
+                    SessionsByLId, sessionBySId, studentByMid, updateAttendanceBySId, updateAttendanceByMId)
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()

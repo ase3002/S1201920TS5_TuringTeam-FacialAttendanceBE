@@ -62,11 +62,11 @@ class LabModelTest(TestCase):
 class StudentModelTest(TestCase):
     def setUp(self):
         self.student = Student.objects.create(mid='U1622102L', name='test',
-                                              email='test@example', face_encoding='ab')
+                                              email='test@example', face_encoding=b'ab')
 
     def test_student(self):
         self.assertEqual(self.student.mid, 'U1622102L')
-        self.assertEqual(self.student.face_encoding, 'ab')
+        self.assertEqual(self.student.face_encoding, b'ab')
 
 
 class AttendanceModelTest(TestCase):
