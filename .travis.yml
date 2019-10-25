@@ -1,8 +1,4 @@
 sudo: required
-language: python
-
-python:
-  - "3.7-dev"
 
 services:
   - docker
@@ -20,7 +16,7 @@ before_install:
   - sudo mv docker-compose /usr/local/bin
 
 before_script:
-  - docker pull $CACHE_IMAGE:$TAG || true
+  - docker pull $CACHE_IMAGE:latest || true
 
 script:
   - docker-compose build
