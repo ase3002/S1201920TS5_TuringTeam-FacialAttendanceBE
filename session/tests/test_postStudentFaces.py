@@ -13,10 +13,10 @@ class TestStudentFaceEncodingView(TestCase):
                                               email='test@example')
         self.client = Client()
         User.objects.create_user(username='admin', email='admin@example.com', password='adminpassword')
-        self.client.login(username='admin', password='adminpassword')
+        print(self.client.login(username='admin', password='adminpassword'))
 
-    def testPostStudentFaceImageSuccess(self):
-        with open(os.path.join(os.path.dirname(__file__), 'studentImage1.jpg'), 'rb') as f:
+    def testPostStudentFaceImage(self):
+        with open(os.path.join(os.path.dirname(__file__), 'testImage.jpg'), 'rb') as f:
             response = self.client.post(reverse('student_face'), {'mid': 'U1622102L', 'image': f})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
