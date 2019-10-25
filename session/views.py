@@ -160,7 +160,7 @@ class StudentFaceEncodingView(views.APIView):
     def post(self, request, *args, **kwargs):
         if 'image' not in request.data:
             raise exceptions.ParseError("No image found")
-        if 'matric' not in request.data:
+        if 'mid' not in request.data:
             raise exceptions.ParseError("No matric found")
 
         f = request.data['image']
@@ -177,12 +177,12 @@ class StudentFaceEncodingView(views.APIView):
         face_encoding_bytes = pickle.dumps(face_encoding)
         face_encoding_base64 = base64.b64encode(face_encoding_bytes)
 
-        sid = request.data['matric']
+        mid = request.data['mid']
         try:
-            student = Student.objects.get(pk=sid)
+            student = Student.objects.get(pk=mid)
             student.face_encoding = face_encoding_base64
             student.save()
         except Exception:
             return Response('Error occured', status=status.HTTP_400_BAD_REQUEST)
 
-        return Response(sid, status=status.HTTP_200_OK)
+        return Response(mid, status=status.HTTP_200_OK)
