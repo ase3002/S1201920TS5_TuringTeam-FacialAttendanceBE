@@ -16,9 +16,11 @@ class LabSerializer(serializers.ModelSerializer):
 
 
 class StudentSerializer(serializers.ModelSerializer):
+    labs = serializers.PrimaryKeyRelatedField(queryset=Lab.objects.all(), many=True, source="lab")
+
     class Meta:
         model = Student
-        exclude = ('face_encoding',)
+        fields = ('mid', 'name', 'email', 'labs')
 
 
 class SessionSerializer(serializers.ModelSerializer):

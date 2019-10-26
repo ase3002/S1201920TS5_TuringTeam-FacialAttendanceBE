@@ -48,8 +48,8 @@ class Student(models.Model):
     mid = models.CharField(max_length=15, primary_key=True)
     name = models.CharField(max_length=50)
     email = models.CharField(max_length=50)
-    face_encoding = models.BinaryField()
-    lab = models.ManyToManyField(Lab, related_name="students")
+    face_encoding = models.BinaryField(blank=True)
+    lab = models.ManyToManyField(Lab, related_name="students", blank=True)
 
     def __str__(self):
         return self.name
