@@ -1,29 +1,64 @@
+sudo: required
 language: python
 python:
   - "3.7-dev"
 
 cache: pip
 
-services: postgresql
+env:
+  global:
+    CACHE_IMAGE: caoliu98/facial-attendance-backend
+    DOCKER_COMPOSE_VERSION: 1.23.2
+    DOCKER_USERNAME: caoliu98
+    DOCKER_PAT: f46b12cf-c92e-4d1f-95ec-b25a066e1339
 
-before_install:
-  - export DJANGO_SETTINGS_MODULE=facial_attendance.settings
-  - export PGHOST=localhost
-  - export PGPORT=5432
+services:
+  - postgresql
+  - docker
 
 install:
   - pip install -r requirements.txt
   - pip install -q psycopg2
   - pip install -q coveralls
 
-before_script:
-  - psql -c "create database travis_ci_test;" -U postgres
+stages:
+  - test
+  - name: deploy
+    if: branch = master OR branch = develop
 
-script:
-  - pycodestyle .
-  - python manage.py makemigrations && python manage.py migrate
-  - coverage run manage.py test
+jobs:
+  include:
+    - stage: test
+      env:
+        - DJANGO_SETTINGS_MODULE: facial_attendance.settings
+        - PGHOST: localhost
+        - PGPORT: 5432
+      before_script:
+        - psql -c "create database travis_ci_test;" -U postgres
+      script:
+        - pycodestyle .
+        - python manage.py makemigrations && python manage.py migrate
+        - coverage run manage.py test
+      after_script:
+        - coverage report
+        - coveralls
 
-after_script:
-  - coverage report
-  - coveralls
+    - stage: deploy
+      before_install:
+        - if [ branch = master ];
+          then export TAG=stable;
+          else export TAG=latest;
+          fi
+      install:
+        - sudo rm /usr/local/bin/docker-compose
+        - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+        - chmod +x docker-compose
+        - sudo mv docker-compose /usr/local/bin
+      before_script:
+        - docker pull $CACHE_IMAGE:$TAG || true
+      script:
+        - docker-compose build
+        - docker-compose up -d
+      after_success:
+        - echo "$DOCKER_PAT" | docker login -u "$DOCKER_USERNAME" --password-stdin
+        - docker push $CACHE_IMAGE:$TAG
