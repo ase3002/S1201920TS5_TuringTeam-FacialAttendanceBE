@@ -17,6 +17,7 @@ from rest_framework.decorators import api_view, parser_classes
 from .session_manager import handle_recognition_request, read_image_from_request
 from labs.models import Student, Session, Lab, Attendance
 from labs.serializers import AttendanceSerializer
+from .email_service import EmailService
 
 IMG_PATH = 'images'
 counter = 0
@@ -52,13 +53,40 @@ def count_faces(request):
 
 @api_view(['POST'])
 def end_session(request, *args, **kwargs):
+    print("end session")
+    es = EmailService()
+
     if 'sid' not in request.data:
         raise ParseError('No sid found')
 
     sid = request.data['sid']
     if sid in face_data:
+        records = Attendance.objects.filter(session=sid)
+        session = Session.objects.get(pk=sid)
+        lab = session.lab
+        if not records.exists():
+            return HttpResponseBadRequest("No records found")
+
+        late_mid = [record.student_id for record in records if record.status == 'AB']
+        absent_mid = [record.student_id for record in records if record.status == 'L']
+
+        l_students = Student.objects.filter(pk__in=late_mid)
+        ab_students = Student.objects.filter(pk__in=absent_mid)
+
+        for student in l_students:
+            es.send_messages(subject="Late for Lab session",
+                             template="emailTemplate.html",
+                             context={'name': student.name, 'status': "late", 'lab': str(lab)},
+                             to_emails=[student.email])
+        for student in ab_students:
+            es.send_messages(subject="Absent from Lab session",
+                             template="emailTemplate.html",
+                             context={'name': student.name, 'status': "absent", 'lab': str(lab)},
+                             to_emails=[student.email])
+
         del face_data[sid]
         return Response(sid, status=status.HTTP_200_OK)
+
     return HttpResponseBadRequest('Session not started')
 
 
