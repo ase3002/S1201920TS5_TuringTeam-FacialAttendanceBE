@@ -1,6 +1,6 @@
 import datetime
 from django.test import TestCase
-from ..models import Course, Lab, Student
+from ..models import Course, Lab, Student, Session, Attendance
 from django.contrib.auth.models import User
 
 
@@ -75,12 +75,34 @@ class StudentModelTest(TestCase):
         self.assertEqual(self.student.mid, 'U1622102L')
         self.assertEqual(self.student.face_encoding, b'ab')
 
-
-class AttendanceModelTest(TestCase):
-    # TODO
-    pass
+    def test_student_str(self):
+        return self.assertEqual(str(self.student), self.student.name)
 
 
 class SessionModelTest(TestCase):
-    # TODO
-    pass
+
+    @staticmethod
+    def create_session(group='TS5'):
+        course = CourseModelTest.create_course()
+        instructor = create_test_user()
+        lab = Lab.objects.create(group=group, course=course)
+        return Session.objects.create(lab=lab)
+
+    def setUp(self):
+        self.session = self.create_session()
+
+    def test_session_str(self):
+        self.assertEqual(str(self.session), "%s %s" % (self.session.lab,
+                                                       self.session.session_time.strftime('%b %d %H:%M')))
+
+
+class AttendanceModelTest(TestCase):
+    def setUp(self):
+        self.student = Student.objects.create(mid='U1622102L', name='test',
+                                              email='test@example', face_encoding=b'ab')
+        self.session = SessionModelTest.create_session()
+        self.attendance = Attendance.objects.create(student=self.student, session=self.session)
+
+    def test_attendance_str(self):
+        return self.assertEqual(str(self.attendance), "%s %s %s" % (self.attendance.session, self.attendance.student,
+                                                                    self.attendance.get_status_display()))
