@@ -34,6 +34,10 @@ class CourseModelTest(TestCase):
         this_year = datetime.date.today().year
         self.assertEqual(oop_course.year, this_year)
 
+    def test_course_str(self):
+        self.assertEqual(str(self.course), "%s-%s-%s-%s" % (self.course.year, self.course.get_semester_display(),
+                                                            self.course.cid, self.course.course_name))
+
 
 class LabModelTest(TestCase):
     def setUp(self):
@@ -57,6 +61,9 @@ class LabModelTest(TestCase):
     def test_getInstructorsByLabs(self):
         self.testuser1.labs.add(self.lab)
         self.assertEqual(len(self.testuser1.labs.all()), 1)
+
+    def test_lab_str(self):
+        self.assertEqual(str(self.lab), "%s-%s" % (self.lab.course, self.lab.group))
 
 
 class StudentModelTest(TestCase):
