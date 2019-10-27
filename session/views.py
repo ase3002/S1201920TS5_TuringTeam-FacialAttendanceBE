@@ -133,7 +133,7 @@ def post_attendace_img(request, *args, **kwargs):
 
     attended_matric = []
     for face_encoding in face_encodings:
-        matches = face_recognition.compare_faces(known_face_encodings, face_encoding)
+        matches = face_recognition.compare_faces(known_face_encodings, face_encoding, tolerance=0.4)
         name = 'Unknown'
 
         face_distances = face_recognition.face_distance(known_face_encodings, face_encoding)
