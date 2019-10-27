@@ -2,10 +2,28 @@ language: python
 python:
   - "3.7-dev"
 
-services:
-  - docker
+cache: pip
 
-before_script: pip install docker-compose
+services: postgresql
+
+before_install:
+  - export DJANGO_SETTINGS_MODULE=facial_attendance.settings
+  - export PGHOST=localhost
+  - export PGPORT=5432
+
+install:
+  - pip install -r requirements.txt
+  - pip install -q psycopg2
+  - pip install -q coveralls
+
+before_script:
+  - psql -c "create database travis_ci_test;" -U postgres
 
 script:
-  - docker-compose run web sh -c "python manage.py makemigrations && python manage.py migrate && python manage.py test && flake8"
+  - pycodestyle .
+  - python manage.py makemigrations && python manage.py migrate
+  - coverage run manage.py test
+
+after_script:
+  - coverage report
+  - coveralls
