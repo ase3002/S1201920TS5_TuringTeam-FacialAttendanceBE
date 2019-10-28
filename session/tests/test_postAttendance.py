@@ -37,7 +37,7 @@ class TestPostAttendanceImage(TestCase):
         with open(os.path.join(os.path.dirname(__file__), 'studentImage1.jpg'), 'rb') as f:
             encodedImg = "{},{}".format(header, str(base64.b64encode(f.read()), 'utf-8'))
 
-        response = self.client.post(reverse('attendance'), {'sid': 1, 'image': encodedImg}, content_type="application/json")
+        response = self.client.post(reverse('attendance'), {'sid': self.session.sid, 'image': encodedImg}, content_type="application/json")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         mids = [entry['student'] for entry in response.data]
@@ -51,12 +51,12 @@ class TestPostAttendanceImage(TestCase):
         # previous session record
         with open(os.path.join(os.path.dirname(__file__), 'studentImage1.jpg'), 'rb') as f:
             encodedImg = "{},{}".format(header, str(base64.b64encode(f.read()), 'utf-8'))
-            self.client.post(reverse('attendance'), {'sid': 1, 'image': encodedImg}, content_type="application/json")
+            self.client.post(reverse('attendance'), {'sid': self.session.sid, 'image': encodedImg}, content_type="application/json")
 
         with open(os.path.join(os.path.dirname(__file__), 'studentImage2.jpg'), 'rb') as f:
             encodedImg = "{},{}".format(header, str(base64.b64encode(f.read()), 'utf-8'))
 
-        response = self.client.post(reverse('attendance'), {'sid': 1, 'image': encodedImg}, content_type="application/json")
+        response = self.client.post(reverse('attendance'), {'sid': self.session.sid, 'image': encodedImg}, content_type="application/json")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         mids = [entry['student'] for entry in response.data]
