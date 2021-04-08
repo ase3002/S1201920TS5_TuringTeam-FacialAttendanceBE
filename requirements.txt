@@ -1,5 +1,5 @@
 Click==7.0
-Django==2.2.5
+Django==2.2.20
 django-cors-headers==3.1.0
 dlib==19.17.0
 face-recognition==1.2.3
